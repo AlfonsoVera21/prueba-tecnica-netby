@@ -4,15 +4,16 @@ Este repositorio contiene dos microservicios minimal API en .NET 8 que cumplen c
 
 - **Gestión de productos**: creación, edición, consulta y eliminación con validación de stock.
 - **Gestión de transacciones**: registra compras y ventas actualizando el stock disponible.
-- **Búsquedas y filtrados**: se aplican filtros por nombre, código, categoría, tipo y rango de precios usando búsquedas binarias para resolver coincidencias por prefijo de nombre o código de forma eficiente.
+- **Búsquedas y filtrados**: se aplican filtros por nombre, código, categoría, tipo y rango de precios usando búsquedas binarias 
+ para resolver coincidencias por prefijo de nombre o código de forma eficiente.
 - **Historial de movimientos**: se exponen transacciones ordenadas por fecha y el historial por producto.
 
-La persistencia utiliza SQLite y se incluye el script `database.sql` en la raíz para crear las tablas requeridas.
+La persistencia utiliza PostgreSQL y se incluye el script `database.sql` en la raíz para crear las tablas requeridas.
 
 ## Requisitos
 
 - .NET SDK 8.0+
-- SQLite (el runtime de `Microsoft.Data.Sqlite` se encarga de crear el archivo si no existe)
+- PostgreSQL 15+ con una base de datos accesible para los servicios
 
 ## Estructura
 
@@ -25,7 +26,20 @@ src/
 
 ## Configuración rápida
 
-Ambos servicios comparten el mismo archivo `data/netby.db`. Si se ejecutan en el mismo host pueden iniciarse en puertos diferentes. A modo de ejemplo:
+Configura la cadena de conexión a PostgreSQL mediante la variable de entorno `POSTGRES_CONNECTION_STRING` (por ejemplo, `Host=localhost;Port=5432;Database=netby;Username=postgres;Password=postgres`). Si no se define, se usará ese valor por defecto.
+
+```bash
+export POSTGRES_CONNECTION_STRING="Host=localhost;Port=5432;Database=netby;Username=postgres;Password=postgres"
+```
+
+Crea la base de datos y las tablas ejecutando el script SQL:
+
+```bash
+createdb netby
+psql -d netby -f database.sql
+```
+
+Luego inicia cada servicio en un puerto distinto, apuntando a la misma base:
 
 ```bash
 cd src/ProductService
@@ -44,7 +58,8 @@ Swagger queda habilitado en `Development` y muestra los endpoints disponibles.
 ## Endpoints principales
 
 ### ProductService
-- `GET /products` Filtra por `name`, `code`, `category`, `type`, `minPrice`, `maxPrice` utilizando búsqueda binaria para nombres y códigos.
+- `GET /products` Filtra por `name`, `code`, `category`, `type`, `minPrice`, `maxPrice` utilizando búsqueda binaria para nombres
+ y códigos.
 - `GET /products/{code}` Obtiene un producto.
 - `POST /products` Crea un nuevo producto.
 - `PUT /products/{code}` Actualiza un producto existente.
@@ -58,10 +73,10 @@ Swagger queda habilitado en `Development` y muestra los endpoints disponibles.
 
 ## Script SQL
 
-Ejecuta `database.sql` para crear las tablas necesarias en SQLite:
+Ejecuta `database.sql` para crear las tablas necesarias en PostgreSQL:
 
 ```bash
-sqlite3 data/netby.db < database.sql
+psql -d netby -f database.sql
 ```
 
 ## Criterios de aceptación cubiertos
