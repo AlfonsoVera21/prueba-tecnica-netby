@@ -6,12 +6,12 @@ using SharedKernel.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var dataDirectory = Path.Combine(AppContext.BaseDirectory, "..", "..", "data");
-Directory.CreateDirectory(dataDirectory);
-var databasePath = Path.Combine(dataDirectory, "netby.db");
+var connectionString = builder.Configuration.GetConnectionString("Postgres")
+                       ?? Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING")
+                       ?? "Host=localhost;Port=5432;Database=netby;Username=postgres;Password=postgres";
 
 builder.Services.AddDbContext<ProductDbContext>(options =>
-    options.UseSqlite($"Data Source={databasePath}")
+    options.UseNpgsql(connectionString)
            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
 builder.Services.AddScoped<ProductSearchService>();

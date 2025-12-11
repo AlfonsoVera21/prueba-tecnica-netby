@@ -1,21 +1,21 @@
 CREATE TABLE IF NOT EXISTS Products (
-    Id TEXT PRIMARY KEY,
-    Code TEXT NOT NULL UNIQUE,
-    Name TEXT NOT NULL,
-    Category TEXT,
+    Id UUID PRIMARY KEY,
+    Code VARCHAR(64) NOT NULL UNIQUE,
+    Name VARCHAR(256) NOT NULL,
+    Category VARCHAR(128),
     Type INTEGER NOT NULL,
-    UnitPrice DECIMAL(18,2) NOT NULL,
+    UnitPrice NUMERIC(18,2) NOT NULL,
     Stock INTEGER NOT NULL DEFAULT 0,
-    CreatedAt TEXT NOT NULL
+    CreatedAt TIMESTAMPTZ NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Transactions (
-    Id TEXT PRIMARY KEY,
-    ProductCode TEXT NOT NULL,
+    Id UUID PRIMARY KEY,
+    ProductCode VARCHAR(64) NOT NULL,
     Quantity INTEGER NOT NULL,
     Type INTEGER NOT NULL,
-    PerformedBy TEXT,
-    PerformedAt TEXT NOT NULL,
-    Notes TEXT,
-    FOREIGN KEY (ProductCode) REFERENCES Products(Code)
+    PerformedBy VARCHAR(128),
+    PerformedAt TIMESTAMPTZ NOT NULL,
+    Notes VARCHAR(512),
+    CONSTRAINT FK_Transactions_Products FOREIGN KEY (ProductCode) REFERENCES Products(Code)
 );
