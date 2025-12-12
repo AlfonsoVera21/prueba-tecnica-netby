@@ -16,7 +16,8 @@ public sealed class TransactionFilter
         parsedTo = null;
         error = null;
 
-        if (!string.IsNullOrWhiteSpace(Type) && !Enum.TryParse(Type, true, out TransactionType transactionType))
+        TransactionType transactionType = default;
+        if (!string.IsNullOrWhiteSpace(Type) && !Enum.TryParse(Type, true, out transactionType))
         {
             error = "El tipo de transacción es inválido. Usa Purchase o Sale.";
             return false;
@@ -24,7 +25,8 @@ public sealed class TransactionFilter
 
         parsedType = string.IsNullOrWhiteSpace(Type) ? null : transactionType;
 
-        if (!string.IsNullOrWhiteSpace(From) && !DateTime.TryParse(From, out DateTime fromDate))
+        DateTime fromDate = default;
+        if (!string.IsNullOrWhiteSpace(From) && !DateTime.TryParse(From, out fromDate))
         {
             error = "La fecha 'From' es inválida. Usa un formato ISO 8601 (por ejemplo 2024-01-15).";
             return false;
@@ -32,7 +34,8 @@ public sealed class TransactionFilter
 
         parsedFrom = string.IsNullOrWhiteSpace(From) ? null : fromDate;
 
-        if (!string.IsNullOrWhiteSpace(To) && !DateTime.TryParse(To, out DateTime toDate))
+        DateTime toDate = default;
+        if (!string.IsNullOrWhiteSpace(To) && !DateTime.TryParse(To, out toDate))
         {
             error = "La fecha 'To' es inválida. Usa un formato ISO 8601 (por ejemplo 2024-01-31).";
             return false;

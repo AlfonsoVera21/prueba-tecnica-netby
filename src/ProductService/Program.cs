@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres")
                        ?? Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING")
-                       ?? "Host=localhost;Port=5432;Database=netby;Username=postgres;Password=postgres";
+                       ?? "Host=localhost;Port=5432;Database=netby;Username=postgres;Password=root";
 
 builder.Services.AddDbContext<ProductDbContext>(options =>
     options.UseNpgsql(connectionString)
@@ -23,11 +23,10 @@ var app = builder.Build();
 
 await EnsureDatabaseAsync(app.Services);
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.MapProductEndpoints();
 

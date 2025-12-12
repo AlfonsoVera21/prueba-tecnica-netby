@@ -9,11 +9,12 @@ public class TransactionDbContext : DbContext
     {
     }
 
-    public DbSet<Product> Products => Set<Product>();
     public DbSet<TransactionRecord> Transactions => Set<TransactionRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<TransactionRecord>(entity =>
         {
             entity.HasKey(t => t.Id);
