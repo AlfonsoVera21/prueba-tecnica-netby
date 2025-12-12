@@ -13,6 +13,11 @@ public static class TransactionEndpoints
 
         group.MapGet("", async ([AsParameters] TransactionFilter filter, TransactionDbContext dbContext, CancellationToken ct) =>
         {
+            if (!filter.TryParse(out var type, out var from, out var to, out var error))
+            {
+                return Results.BadRequest(error);
+            }
+
             var query = dbContext.Transactions.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(filter.ProductCode))
@@ -21,19 +26,19 @@ public static class TransactionEndpoints
                 query = query.Where(t => t.ProductCode.ToUpper() == normalized);
             }
 
-            if (filter.Type.HasValue)
+            if (type.HasValue)
             {
-                query = query.Where(t => t.Type == filter.Type.Value);
+                query = query.Where(t => t.Type == type.Value);
             }
 
-            if (filter.From.HasValue)
+            if (from.HasValue)
             {
-                query = query.Where(t => t.PerformedAt >= filter.From.Value);
+                query = query.Where(t => t.PerformedAt >= from.Value);
             }
 
-            if (filter.To.HasValue)
+            if (to.HasValue)
             {
-                query = query.Where(t => t.PerformedAt <= filter.To.Value);
+                query = query.Where(t => t.PerformedAt <= to.Value);
             }
 
             var items = await query.OrderByDescending(t => t.PerformedAt).ToListAsync(ct);
